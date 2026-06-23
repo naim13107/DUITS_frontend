@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // 1. Create the base instance
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/v1', // Maps to your Django backend
+  baseURL: 'https://duits-backend.vercel.app/api/v1/', // Maps to your Django backend
   headers: {
     'Content-Type': 'application/json',
   },
