@@ -7,7 +7,7 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  // 1. Initialize user from localStorage
+  // 1. Initialize user from localStorage safely
   const [user, setUser] = useState(() => {
     try {
       const savedUser = localStorage.getItem('user');
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
           setUser(res.data);
           localStorage.setItem('user', JSON.stringify(res.data));
         } catch (error) {
-          console.error("Session expired or invalid");
+          console.error("Session expired or invalid. Clearing tokens.");
           localStorage.removeItem('access');
           localStorage.removeItem('refresh');
           localStorage.removeItem('user');
@@ -44,12 +44,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // 3. Multi-tab Logout Synchronization
-  // If a user logs out in Tab A, this instantly logs them out in Tab B
   useEffect(() => {
     const syncLogout = (event) => {
       if (event.key === 'access' && event.newValue === null) {
         setUser(null);
-        window.location.href = '/login';
+        // .replace() is better than .href because it doesn't leave a broken "back" button trail
+        window.location.replace('/login');
       }
     };
 
@@ -59,10 +59,12 @@ export const AuthProvider = ({ children }) => {
 
   // 4. Login Function (Memoized)
   const login = useCallback(async (email, password) => {
+    // Await the tokens
     const tokenRes = await authAPI.login({ email, password });
     localStorage.setItem('access', tokenRes.data.access);
     localStorage.setItem('refresh', tokenRes.data.refresh);
 
+    // Fetch user details with the newly set tokens
     const userRes = await authAPI.getMe();
     setUser(userRes.data);
     localStorage.setItem('user', JSON.stringify(userRes.data));
@@ -72,23 +74,27 @@ export const AuthProvider = ({ children }) => {
 
   // 5. Logout Function (Memoized)
   const logout = useCallback(() => {
+    // Clear all credentials
     localStorage.removeItem('access');
     localStorage.removeItem('refresh');
     localStorage.removeItem('user');
+    
+    // Clear React state
     setUser(null);
-    window.location.href = '/login'; 
+    
+    // Instantly redirect and replace history so they can't click "back" to a protected page
+    window.location.replace('/login'); 
   }, []);
 
   // 6. Bulletproof Role Checkers (Memoized)
   const isAdmin = useCallback(() => {
     if (!user) return false;
-    // Checks Django's built-in admin flag OR your custom role string
     return user.is_superuser === true || user.role?.toLowerCase() === 'admin';
   }, [user]);
 
   const isMember = useCallback(() => {
     if (!user) return false;
-    if (user.is_superuser === true) return true; // Admins are always members
+    if (user.is_superuser === true) return true; 
     
     const validRoles = ['admin', 'executive', 'junior_executive', 'member'];
     return validRoles.includes(user.role?.toLowerCase());
@@ -108,7 +114,7 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={contextValue}>
       {loading ? (
-        <div className="flex h-screen items-center justify-center">
+        <div className="flex h-screen items-center justify-center bg-base-100">
           <span className="loading loading-spinner loading-lg text-primary"></span>
         </div>
       ) : (
