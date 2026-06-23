@@ -77,7 +77,7 @@ const Navbar = ({ theme, toggleTheme }) => {
                 <label htmlFor="mobile-drawer" className="btn btn-ghost btn-circle absolute top-4 right-4 text-slate-500">
                   <X className="h-6 w-6" />
                 </label>
-                <div className="font-mono text-xs text-slate-400 uppercase tracking-widest mb-4 px-4">Navigation_Menu</div>
+                <div className="font-mono text-xs text-slate-400 uppercase tracking-widest mb-4 px-4">Navigation</div>
                 {navLinks.map((item) => (
                   <NavItem key={item.name} item={item} />
                 ))}
@@ -92,7 +92,7 @@ const Navbar = ({ theme, toggleTheme }) => {
             </div>
             <div className="flex flex-col">
               <span className="font-black text-xl text-slate-900 leading-tight tracking-tight">DUITS</span>
-              <span className="font-mono text-[9px] text-blue-600 leading-none tracking-[0.2em] font-bold uppercase">System_Core</span>
+              <span className="font-mono text-[9px] text-blue-600 leading-none tracking-[0.2em] font-bold uppercase">IT Society</span>
             </div>
           </Link>
         </div>
@@ -131,16 +131,16 @@ const Navbar = ({ theme, toggleTheme }) => {
               </div>
               <ul tabIndex={0} className="mt-4 z-50 p-2 shadow-2xl menu menu-sm dropdown-content bg-white/95 backdrop-blur-xl rounded-2xl w-60 border border-slate-200">
                 <li className="px-4 py-3 border-b border-slate-100 mb-2">
-                  <div className="font-mono text-[10px] text-slate-400 uppercase tracking-widest mb-1">Active_Session</div>
+                  <div className="font-mono text-[10px] text-slate-400 uppercase tracking-widest mb-1">Logged in as</div>
                   <div className="font-bold text-slate-800 truncate">{user.full_name}</div>
                 </li>
-                <li><Link to="/profile" className="hover:bg-blue-50 hover:text-blue-700 font-medium py-2 rounded-lg">Profile Matrix</Link></li>
+                <li><Link to="/profile" className="hover:bg-blue-50 hover:text-blue-700 font-medium py-2 rounded-lg">Profile</Link></li>
                 
                 {/* RESTRICTED LINKS */}
                 {isMember() && (
                   <>
-                    <li><Link to="/my-articles" className="hover:bg-blue-50 hover:text-blue-700 font-medium py-2 rounded-lg">My Data Nodes</Link></li>
-                    <li><Link to="/submit-article" className="hover:bg-blue-50 hover:text-blue-700 font-medium py-2 rounded-lg">Submit Node</Link></li>
+                    <li><Link to="/my-articles" className="hover:bg-blue-50 hover:text-blue-700 font-medium py-2 rounded-lg">My Articles</Link></li>
+                    <li><Link to="/submit-article" className="hover:bg-blue-50 hover:text-blue-700 font-medium py-2 rounded-lg">Submit Article</Link></li>
                   </>
                 )}
                 
@@ -149,14 +149,14 @@ const Navbar = ({ theme, toggleTheme }) => {
                     <div className="divider my-0"></div>
                     <li>
                       <Link to="/admin/dashboard" className="text-blue-600 font-bold hover:bg-blue-50 py-2 rounded-lg flex items-center gap-2">
-                        <ShieldAlert className="w-4 h-4" /> Admin Override
+                        <ShieldAlert className="w-4 h-4" /> Admin Dashboard
                       </Link>
                     </li>
                   </>
                 )}
                 
                 <div className="divider my-0"></div>
-                <li><button onClick={logout} className="text-red-600 font-bold hover:bg-red-50 py-2 rounded-lg">Terminate Session</button></li>
+                <li><button onClick={logout} className="text-red-600 font-bold hover:bg-red-50 py-2 rounded-lg">Logout</button></li>
               </ul>
             </div>
           )}
