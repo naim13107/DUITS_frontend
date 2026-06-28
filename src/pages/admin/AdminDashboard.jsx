@@ -69,9 +69,9 @@ const AdminDashboard = () => {
   const handleDeleteUser = async (userId, userName) => {
   if (!window.confirm(`Delete ${userName} permanently?`)) return;
   try {
-    await apiClient.delete(`/auth/users/${userId}/`, { data: {} }); // explicit empty body
+    await apiClient.delete(`/admin/users/${userId}/delete/`);
     setUsers(users.filter(u => u.id !== userId));
-    toast.success(`User "${userName}" deleted successfully.`);
+    toast.success(`User "${userName}" deleted!`);
   } catch (err) {
     console.error("Delete User Error:", err.response?.data);
     toast.error(err.response?.data?.detail || "Failed to delete user.");
