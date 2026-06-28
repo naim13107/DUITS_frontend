@@ -67,20 +67,16 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteUser = async (userId, userName) => {
-    if (!window.confirm(`Delete ${userName} permanently?`)) return;
-    try {
-      await apiClient.delete(`/auth/users/${userId}/`);
-      setUsers(users.filter(u => u.id !== userId));
-      toast.success(`User deleted!`);
-    } catch (err) {
-      // LOG THE FULL ERROR TO THE CONSOLE
-      console.error("Delete User Error:", err.response?.data);
-      
-      // SHOW THE SPECIFIC BACKEND ERROR
-      const errorMessage = err.response?.data?.detail || err.response?.data?.error || "Failed to delete user.";
-      toast.error(errorMessage);
-    }
-  };
+  if (!window.confirm(`Delete ${userName} permanently?`)) return;
+  try {
+    await apiClient.delete(`/auth/users/${userId}/`, { data: {} }); // explicit empty body
+    setUsers(users.filter(u => u.id !== userId));
+    toast.success(`User "${userName}" deleted successfully.`);
+  } catch (err) {
+    console.error("Delete User Error:", err.response?.data);
+    toast.error(err.response?.data?.detail || "Failed to delete user.");
+  }
+};
 
   const fetchRecruitmentData = async () => {
     setIsLoading(true);
