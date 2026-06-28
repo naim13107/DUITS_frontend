@@ -1,4 +1,3 @@
-// src/api/apiClient.js
 import axios from 'axios';
 
 // 1. Create the base instance
@@ -9,7 +8,7 @@ const apiClient = axios.create({
   },
 });
 
-// 2. Request Interceptor: Attach the access token if the user is logged in
+// 2. Request Interceptor
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access');
@@ -21,40 +20,36 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 3. Response Interceptor: Handle expired tokens smoothly
+// 3. Response Interceptor
 apiClient.interceptors.response.use(
-  (response) => response, // If the response is good, just return it
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
     
-    // If we get a 401 Unauthorized, and we haven't already tried to retry this request
+    // Check if it's a 401 error and not a retry
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       
       try {
         const refreshToken = localStorage.getItem('refresh');
-        
-        // If there's no refresh token, they aren't logged in at all
         if (!refreshToken) throw new Error("No refresh token");
 
-        // Ask Django for a new access token
-        const res = await axios.post('https://duits-backend.vercel.app/api/v1/auth/jwt/refresh/', { 
+        // FIX: Use apiClient (which uses baseURL) instead of hardcoded axios.post
+        const res = await apiClient.post('/auth/jwt/refresh/', { 
           refresh: refreshToken 
         });
         
-        // Save the new token
         localStorage.setItem('access', res.data.access);
         
-        // Update the failed request with the new token and try again!
         originalRequest.headers.Authorization = `JWT ${res.data.access}`;
         return apiClient(originalRequest);
         
       } catch (refreshError) {
-        // If the refresh token is also dead, kick them out to the login screen
         localStorage.removeItem('access');
         localStorage.removeItem('refresh');
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        // Use replace to avoid infinite loops and 404s
+        window.location.replace('/login');
         return Promise.reject(refreshError);
       }
     }
