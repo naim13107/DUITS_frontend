@@ -73,7 +73,12 @@ const AdminDashboard = () => {
       setUsers(users.filter(u => u.id !== userId));
       toast.success(`User deleted!`);
     } catch (err) {
-      toast.error("Failed to delete user from server.");
+      // LOG THE FULL ERROR TO THE CONSOLE
+      console.error("Delete User Error:", err.response?.data);
+      
+      // SHOW THE SPECIFIC BACKEND ERROR
+      const errorMessage = err.response?.data?.detail || err.response?.data?.error || "Failed to delete user.";
+      toast.error(errorMessage);
     }
   };
 
