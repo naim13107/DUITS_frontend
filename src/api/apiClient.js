@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // 1. Create the base instance
 const apiClient = axios.create({
-  baseURL: 'https://duits-backend.vercel.app/api/v1/', // Maps to your Django backend
+  baseURL: 'https://duits-backend.vercel.app/api/v1/', 
   headers: {
     'Content-Type': 'application/json',
   },
@@ -38,7 +38,7 @@ apiClient.interceptors.response.use(
         if (!refreshToken) throw new Error("No refresh token");
 
         // Ask Django for a new access token
-        const res = await axios.post('http://127.0.0.1:8000/api/v1/auth/jwt/refresh/', { 
+        const res = await axios.post('https://duits-backend.vercel.app/api/v1/auth/jwt/refresh/', { 
           refresh: refreshToken 
         });
         
