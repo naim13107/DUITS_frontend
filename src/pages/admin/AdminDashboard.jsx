@@ -66,10 +66,10 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteUser = async (userId, userName) => {
+const handleDeleteUser = async (userId, userName) => {
   if (!window.confirm(`Delete ${userName} permanently?`)) return;
   try {
-    await apiClient.delete(`/admin/users/${userId}/delete/`);
+    await apiClient.delete(`/auth/users/${userId}/`);
     setUsers(users.filter(u => u.id !== userId));
     toast.success(`User "${userName}" deleted!`);
   } catch (err) {
